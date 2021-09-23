@@ -2,8 +2,12 @@
 using namespace std;
 
 int main(int, char *[]) {
+    short port = 8031;
+    boost::asio::io_service io_service;
+    Server server(port, io_service);
+    io_service.run();
+/*
     Server S;
-
     cout << S.receive("INSERT A 0 lean") << endl;
     cout << S.receive("INSERT A 0 understand") << endl;
     cout << S.receive("INSERT A 1 sweater")<< endl;
@@ -21,6 +25,6 @@ int main(int, char *[]) {
     cout << S.receive("INTERSECTION")<< endl;
     cout << S.receive("SYMMETRIC_DIFFERENCE")<< endl;
     cout << S.receive("TRUNCATE A")<< endl;
-
+*/
     return 0;
 }

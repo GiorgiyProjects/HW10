@@ -3,9 +3,10 @@ cmake_minimum_required(VERSION 3.5)
 project(inner_outer_join)
 
 find_package(Boost 1.65.0 COMPONENTS system unit_test_framework REQUIRED)
-add_executable(inner_outer_join main.cpp Table.cpp Table.h DataBase.h CommandInterpreter.h ErrorCodes.h server.h)
+add_executable(inner_outer_join main.cpp Table.cpp Table.h DataBase.h CommandInterpreter.h ErrorCodes.h server.h Database.cpp)
+add_executable(test tests.cpp  Table.cpp Table.h DataBase.h CommandInterpreter.h ErrorCodes.h server.h Database.cpp)
 
-set(TARGETS inner_outer_join)
+set(TARGETS inner_outer_join test)
 
 foreach(target ${TARGETS})
     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR

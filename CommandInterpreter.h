@@ -4,12 +4,20 @@
 #include <vector>
 #include "DataBase.h"
 #include <sstream>
+#include <iostream>
 
 using namespace std;
 
 class CommandInterpreter {
 
 public:
+    string receive(string incoming_string, DataBase& DB)
+    {
+        string result = interpret(incoming_string, DB);
+        cout << result << endl;
+        return result;
+    }
+
     string interpret(string incoming_string, DataBase& DB)
     {
         std::vector<std::string> command_and_args;
@@ -34,7 +42,7 @@ public:
         } else if (command == "SYMMETRIC_DIFFERENCE") {
             return DB.SYMMETRIC_DIFFERENCE();
         }
-        return StatusMap[UNKNOWN_COMMAND];;
+        return StatusMap[UNKNOWN_COMMAND];
     }
 };
 

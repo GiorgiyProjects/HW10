@@ -1,97 +1,51 @@
 #define BOOST_TEST_MODULE tests
-#include "async_server.h"
+#include "CommandInterpreter.h"
 
 #include <boost/test/included/unit_test.hpp>
-namespace ba = boost::asio;
-
 
 BOOST_AUTO_TEST_SUITE( TestSuite )
-
-    struct cout_redirect {
-        cout_redirect( std::streambuf * new_buffer )
-                : old( std::cout.rdbuf( new_buffer ) )
-        { }
-
-        ~cout_redirect( ) {
-            std::cout.rdbuf( old );
-        }
-
-    private:
-        std::streambuf * old;
-    };
-
-    void Input1()
-    {
-        boost::asio::io_service io_service1;
-        ba::ip::tcp::endpoint ep(ba::ip::address::from_string("127.0.0.1"), 8031);
-        ba::ip::tcp::socket sock(io_service1);
-        sock.connect(ep);
-        ba::write(sock, ba::buffer("cmd1\ncmd2\ncmd3\ncmd4\ncmd5\n", 25));
-        return;
+    BOOST_AUTO_TEST_CASE(test1) {
+        CommandInterpreter S;
+        DataBase DB;
+        std::string result;
+        result = S.receive("INSERT A 0 lean", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INSERT A 0 understand", DB) ;
+        BOOST_CHECK(result == "Err duplicate key");
+        result = S.receive("INSERT A 1 sweater", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INSERT A 2 frank", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INSERT A 3 violation", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INSERT A 4 quality", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INSERT A 5 precision", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INSERT B 3 proposal", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INSERT B 4 example", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INSERT B 5 lake", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INSERT B 6 flour", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INSERT B 7 wonder", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INSERT B 8 selection", DB);
+        BOOST_CHECK(result == "OK!");
+        result = S.receive("INTERSECTION", DB);
+        BOOST_CHECK(result == "3,violation,proposal,\n"
+                              "4,quality,example,\n"
+                              "5,precision,lake,\n");
+        result = S.receive("SYMMETRIC_DIFFERENCE", DB);
+        BOOST_CHECK(result == "0,lean,\n"
+                              "1,sweater,\n"
+                              "2,frank,\n"
+                              "6,,flour,\n"
+                              "7,,wonder,\n"
+                              "8,,selection,\n");
+        result = S.receive("TRUNCATE A", DB);
+        BOOST_CHECK(result == "OK!");
     }
-
-    BOOST_AUTO_TEST_CASE(testBulk1) {
-
-        boost::test_tools::output_test_stream output;
-        {
-            cout_redirect guard(output.rdbuf());
-            std::size_t bulk = 3;
-            short port = 8031;
-            boost::asio::io_service io_service;
-
-            AsyncBulkServer server(port, bulk, io_service);
-
-            std::thread input_stream {&Input1};
-            io_service.run();
-            io_service.stop();
-            input_stream.join();
-
-        }
-        BOOST_CHECK(output.is_equal ("bulk: cmd1,cmd2,cmd3\n"
-                                     "bulk: cmd4,cmd5\n"
-        ));
-    }
-
-/*
-    BOOST_AUTO_TEST_CASE(testBulk1) {
-
-        boost::test_tools::output_test_stream output;
-        {
-            cout_redirect guard(output.rdbuf());
-            short port = 8031;
-            boost::asio::io_service io_service;
-
-            ba::ip::tcp::endpoint ep(
-                    ba::ip::address::from_string(
-                            "127.0.0.1"
-                    ),
-                    port
-            );
-
-            ba::ip::tcp::socket sock(io_service);
-            sock.connect(ep);
-            ba::write(sock, ba::buffer("cmd1\ncmd2\ncmd3\ncmd4\ncmd5\n", 25));
-        }
-        BOOST_CHECK(output.is_equal ("bulk: cmd1,cmd2,cmd3\n"
-                                        "bulk: cmd4,cmd5\n"
-                                        ));
-    }
-*/
-    /*
-    BOOST_AUTO_TEST_CASE(testBulk2) {
-
-        boost::test_tools::output_test_stream output;
-        {
-            cout_redirect guard(output.rdbuf());
-            size_t bulk = 3;
-            auto h = async::connect(bulk);
-            async::receive(h, "cmd1\ncmd2\n{\ncmd3\ncmd4\n}\n{\ncmd5\ncmd6\n{\ncmd7\ncmd8\n}\ncmd9\n}\n{\ncmd10\ncmd11\n", 1);
-            async::disconnect(h);
-        }
-        BOOST_CHECK(output.is_equal ("bulk: cmd1,cmd2\n"
-                                        "bulk: cmd3,cmd4\n"
-                                        "bulk: cmd5,cmd6,cmd7,cmd8,cmd9\n"
-        ));
-    }
-     */
 BOOST_AUTO_TEST_SUITE_END()
