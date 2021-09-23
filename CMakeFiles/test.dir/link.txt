@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/test.dir/tests.cpp.o CMakeFiles/test.dir/Table.cpp.o CMakeFiles/test.dir/Database.cpp.o -o test  -lpthread 

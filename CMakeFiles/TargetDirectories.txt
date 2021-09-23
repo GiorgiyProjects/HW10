@@ -1,0 +1,4 @@
+/home/runner/work/HW10/HW10/CMakeFiles/rebuild_cache.dir
+/home/runner/work/HW10/HW10/CMakeFiles/edit_cache.dir
+/home/runner/work/HW10/HW10/CMakeFiles/test.dir
+/home/runner/work/HW10/HW10/CMakeFiles/inner_outer_join.dir
